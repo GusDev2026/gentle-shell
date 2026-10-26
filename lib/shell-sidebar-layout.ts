@@ -216,7 +216,7 @@ export function installSidebar(tui: TUI, theme: ShellBarTheme, placement: () => 
 			return false;
 		}
 		const style = cardStyle();
-		const parts = [...state.parts.entries()];
+		const parts = [...state.parts.entries()].filter(([key]) => key !== "mcp" || state.visibility?.mcp === true);
 		// Digest closures read live session state, so they must be evaluated once
 		// per frame and stored for the next comparison (issue #1681): the sections
 		// loop below reuses this pass instead of calling each digest a second time.
@@ -239,7 +239,7 @@ export function installSidebar(tui: TUI, theme: ShellBarTheme, placement: () => 
 			const preparedHeaderLines = [...(headerPart?.render(Math.max(0, width - HEADER_RIGHT_INSET)) ?? [])];
 			const headerActive = headerPart !== undefined && preparedHeaderLines.some((line) => line.trim() !== "");
 			const contentWidth = scroll.getContentWidth(RAIL_WIDTH);
-			const sections = ["footer", "agents", "todo"].filter((key) => key !== "todo" || state.visibility?.todo !== false).map((key) => {
+			const sections = ["footer", "mcp", "agents", "todo"].filter((key) => (key !== "mcp" || state.visibility?.mcp === true) && (key !== "todo" || state.visibility?.todo !== false)).map((key) => {
 				const component = state.parts.get(key);
 				if (!component) {
 					sectionCache.delete(key);
